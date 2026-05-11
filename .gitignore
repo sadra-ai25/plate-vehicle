@@ -1,0 +1,11 @@
+app/weights/
+app/cropped-plate
+app/original-plate
+app/yolov5
+app/__pycache__
+plate.tar
+nginx.tar
+lpvr.tar
+weights\*.ckpt
+weights\*.pt
+*.log

@@ -1,0 +1,11 @@
+services:
+  plate:
+    build: ./app
+    image: lpvr
+    ports:
+      - "3002:3002"  
+    volumes:
+      - ./app:/app
+    environment:
+      - APP_ROOT=/plate
+    command: uvicorn entry_point:app --workers 2 --host 0.0.0.0 --port 3002
