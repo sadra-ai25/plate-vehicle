@@ -78,46 +78,39 @@ docker compose up -d --build
 
 | Method | Endpoint | Description |
 |---|---|---|
-| `POST` | `/predict` | Detect plates and vehicles from uploaded image |
-| `POST` | `/predict_stream` | Process one frame from RTSP stream |
-| `GET` | `/health` | Service health check |
+| `GET` | `/plate` | Service health check — returns `{"Just": "Fine!"}` |
+| `POST` | `/plate` | Detect plate + vehicle from a base64-encoded image |
 
-### Example: Detect from image
+> Route prefix is `/plate` by default (configurable via `APP_ROOT` env var). Service runs on port `3002` by default (`PORT_NUMBER` env var).
+
+### Example: Detect Plate + Vehicle
 
 ```bash
-curl -X POST http://localhost/predict \
-  -F "file=@/path/to/frame.jpg" \
-  -F "side=R"
+curl -X POST http://localhost:3002/plate \
+  -H "Content-Type: application/json" \
+  -d '{"image": "<base64-encoded-frame>", "side": "R"}'
 ```
 
-### Response
+**Response:**
 
 ```json
 {
-  "results": [
-    {
-      "plate_text": "12ب34567",
-      "vehicle_type": "car",
-      "plate_confidence": 0.94,
-      "vehicle_confidence": 0.88,
-      "plate_bbox": [120, 340, 280, 390],
-      "vehicle_bbox": [50, 200, 450, 520]
-    }
-  ]
+  "plate_text": "12ب34567",
+  "vehicle_type": "car",
+  "plate_confidence": 0.94,
+  "vehicle_confidence": 0.88,
+  "plate_bbox": [120, 340, 280, 390],
+  "vehicle_bbox": [50, 200, 450, 520]
 }
 ```
 
 ### Side Filtering
 
-Use the `side` parameter to filter by vehicle position:
-
-```bash
-# Return only the rightmost vehicle's plate
-curl -X POST http://localhost/predict -F "file=@frame.jpg" -F "side=R"
-
-# Return only the leftmost vehicle's plate
-curl -X POST http://localhost/predict -F "file=@frame.jpg" -F "side=L"
-```
+| `side` value | Behavior |
+|---|---|
+| `"R"` | Returns only the rightmost vehicle's plate |
+| `"L"` | Returns only the leftmost vehicle's plate |
+| (omitted) | Returns all detected plates |
 
 ## Contributing
 
